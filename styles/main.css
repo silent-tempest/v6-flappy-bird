@@ -1,0 +1,230 @@
+::-moz-focus-inner {
+  border: none;
+  outline: none;
+}
+
+button {
+  border: none;
+  outline: none;
+}
+
+html, body, noscript, canvas, button, :focus {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: none;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  text-shadow: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-focus-ring-color: transparent;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  -webkit-text-size-adjust: none;
+}
+
+@font-face {
+  font-family: Ubuntu;
+  src: url( '../fonts/Ubuntu-Medium.ttf' );
+  font-weight: 500;
+}
+
+html, body {
+  min-width: 100%;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  position: relative;
+  background-color: #000;
+}
+
+body, noscript {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column wrap;
+}
+
+#results, noscript div {
+  min-width: 256px;
+  max-width: 384px;
+  width: 75%;
+}
+
+noscript {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba( 0, 0, 0, 0.7 );
+}
+
+noscript div {
+  background-color: #fff;
+  max-height: 70%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 20px 24px 24px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  -webkit-box-shadow: 0 2px 64px rgba( 0, 0, 0, 0.26 );
+  -moz-box-shadow: 0 2px 64px rgba( 0, 0, 0, 0.26 );
+  box-shadow: 0 2px 64px rgba( 0, 0, 0, 0.26 );
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: transparent;
+}
+
+@keyframes fade {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+@-o-keyframes fade {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+@-moz-keyframes fade {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+@-webkit-keyframes fade {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+#tip,
+#score,
+#results-score,
+#results-highscore,
+#restart-button,
+.score,
+.highscore {
+  /* text-shadow: -1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000; */
+  text-transform: uppercase;
+  color: #fff;
+}
+
+#tip,
+#score,
+#results,
+#results-score,
+#results-highscore,
+#restart-button {
+  background-color: transparent;
+  z-index: 2;
+}
+
+#restart-button, #tip {
+  position: fixed;
+}
+
+#restart-button {
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  -webkit-transition-duration: 25ms;
+  -moz-transition-duration: 25ms;
+  -o-transition-duration: 25ms;
+  transition-duration: 25ms;
+  -webkit-transition-timing-function: ease-in-out;
+  -moz-transition-timing-function: ease-in-out;
+  -o-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  -webkit-transition-property: background-color;
+  -moz-transition-property: background-color;
+  -o-transition-property: background-color;
+  transition-property: background-color;
+  min-width: 88px;
+}
+
+#restart-button.active {
+  -webkit-transition-duration: 50ms;
+  -moz-transition-duration: 50ms;
+  -o-transition-duration: 50ms;
+  transition-duration: 50ms;
+  background-color: rgba( 0, 0, 0, 0.12 );
+  -webkit-animation: none;
+  -moz-animation: none;
+  -o-animation: none;
+  animation: none;
+}
+
+#score,
+#results-score,
+#results-highscore {
+  font: 500 64px / 64px Ubuntu;
+}
+
+.highscore {
+  margin-top: 10px;
+}
+
+.score,
+.highscore {
+  font: 500 28px / 64px Ubuntu;
+}
+
+.score:before,
+.score:after,
+.highscore:before,
+.highscore:after {
+  content: '';
+  display: table;
+}
+
+.score:after,
+.highscore:after {
+  clear: both;
+}
+
+#results-score,
+#results-highscore {
+  float: right;
+}
+
+#score {
+  position: absolute;
+  top: 10%;
+  font: 500 64px / 64px Ubuntu;
+  opacity: 0.05;
+}
+
+#tip, #restart-button {
+  bottom: 24px;
+  right: 24px;
+  height: 72px;
+  padding: 0 32px;
+  text-align: right;
+  -webkit-animation: fade 1s infinite;
+  -moz-animation: fade 1s infinite;
+  -o-animation: fade 1s infinite;
+  animation: fade 1s infinite;
+  font: 500 22px / 72px Ubuntu;
+}

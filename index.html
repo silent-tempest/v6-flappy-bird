@@ -1,0 +1,51 @@
+<!-- saved from url=(0014)about:internet -->
+
+<!DOCTYPE html>
+
+<html manifest="manifest.appcache" lang="en-US">
+
+<head>
+  <title>Flappy Bird</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta http-equiv="Cache-Control" content="no-cache" />
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui, shrink-to-fit=no" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="format-detection" content="adress=no" />
+  <meta name="application-name" content="Flappy Bird" />
+  <meta name="apple-mobile-web-app-title" content="Flappy Bird" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#000" class="theme" />
+  <meta name="msapplication-navbutton-color" content="#000" class="theme" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="msapplication-starturl" content="index.html" />
+  <link href="drawable/circle-icon-192.png" rel="shortcut icon" sizes="192x192" />
+  <link href="drawable/circle-icon-192.png" rel="apple-touch-icon" />
+  <link href="manifest.json" rel="manifest" type="application/manifest+json" />
+  <link href="styles/main.css" rel="stylesheet" />
+</head>
+
+<body>
+
+  <div id="results">
+    <div class="score">score<span id="results-score">0</span></div>
+    <div class="highscore">best<span id="results-highscore">0</span></div>
+  </div>
+
+  <div id="tip">tap to jump</div>
+  <div id="score" style="display: none;">0</div>
+  <button id="restart-button">tap here to continue</button>
+
+  <noscript>
+    <div>That application doesn't work without JavaScript.</div>
+  </noscript>
+
+  <script src="scripts/peako.js"></script>
+  <script src="scripts/v6.js"></script>
+  <script src="scripts/main.js"></script>
+
+</body>
+
+</html>
