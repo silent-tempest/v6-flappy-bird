@@ -2,10 +2,10 @@ CACHE MANIFEST
 
 CACHE:
 index.html
-drawable/circle-icon-48.png
-drawable/circle-icon-96.png
-drawable/circle-icon-144.png
-drawable/circle-icon-192.png
+drawable/icon-48.png
+drawable/icon-96.png
+drawable/icon-144.png
+drawable/icon-192.png
 fonts/Ubuntu-Medium.ttf
 scripts/peako.js
 scripts/v6.js
