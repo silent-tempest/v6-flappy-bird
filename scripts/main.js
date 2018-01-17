@@ -10,7 +10,7 @@ var ignore = function ( event ) {
 
 var touchable = 'ontouchend' in window,
     mode = touchable ? 'webgl' : '2d',
-    scale = window.devicePixelRatio || 1,
+    scale = 1,
     canvas = v6( { mode: mode, settings: { scale: scale } } )
       .noFill().lineWidth( 2 * scale );
 
