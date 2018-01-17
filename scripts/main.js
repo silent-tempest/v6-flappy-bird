@@ -38,7 +38,7 @@ var bird = {
   },
 
   update: function ( dt ) {
-    this.speed = max( this.topspeed * dt, ( this.speed - gravity * dt - air * dt ) );
+    this.speed = max( this.topspeed * dt, ( this.speed - gravity * dt ) );
 
     var expangle = v6.Vector2D.angle( worldspeed * dt, this.speed );
 
@@ -56,8 +56,7 @@ var bird = {
   },
 
   restore: function () {
-    this.y = 0;
-    this.speed = 0;
+    this.y = this.speed = 0;
   }
 };
 
@@ -129,7 +128,6 @@ var sethighscore = function ( value ) {
 var min = Math.min,
     max = Math.max,
     gravity = -55 * scale,
-    air = 1,
     score = 0,
     highscore = gethighscore(),
     width = 0,
@@ -297,6 +295,10 @@ var restartbutton = function () {
     .on( touchable ? 'touchstart mousedown' : 'mousedown', touchstart )
     .on( touchable ? 'touchend mouseup' : 'mouseup', touchend );
 
+  if ( !touchable ) {
+    button.text( 'press any key to continue' );
+  }
+
   if ( touchable ) {
     button.touchmove( function ( event ) {
       event = event.targetTouches[ 0 ];
@@ -310,6 +312,10 @@ var restartbutton = function () {
 
   return button[ 0 ];
 }();
+
+if ( !touchable ) {
+  _( '#tip' ).text( 'press spacebar to jump' );
+}
 
 var $window = _( window )
   .keydown( function ( event ) {
