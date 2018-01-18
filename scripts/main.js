@@ -2,6 +2,15 @@
 
 'use strict';
 
+if ( 'serviceWorker' in navigator ) {
+  navigator.serviceWorker.register( 'service-worker.js' )
+    .then( function ( registration ) {
+      console.log( 'Registration succeeded. Scope is ' + registration.scope );
+    }, function ( ex ) {
+      console.log( 'Registration failed with ' + ex );
+    } );
+}
+
 var ignore = function ( event ) {
   return touchable &&
     !event.type.indexOf( 'mouse' ) &&
@@ -10,9 +19,19 @@ var ignore = function ( event ) {
 
 var touchable = 'ontouchend' in window,
     mode = touchable ? 'webgl' : '2d',
-    scale = 1,
-    canvas = v6( { mode: mode, settings: { scale: scale } } )
-      .noFill().lineWidth( 2 * scale );
+    scale = window.devicePixelRatio * 0.75 || 1;
+
+var options = {
+  settings: {
+    scale: scale
+  },
+
+  mode: mode
+};
+
+var canvas = v6( options )
+  .noFill()
+  .lineWidth( 2 * scale );
 
 var theme = {
   pipe: v6.hsla( 0, 70, 60 )
@@ -139,7 +158,7 @@ var min = Math.min,
     pipeoffset = 200 * scale,
     minpipeheight = 256 * scale,
     maxpipeheight = 384 * scale,
-    collisionsteps = Math.floor( 1 * scale ),
+    collisionsteps = Math.round( 1 * scale ),
     touched = false,
     jumped = false,
     stopped = true,
@@ -154,7 +173,7 @@ var min = Math.min,
     rscoreelement = document.getElementById( 'results-score' ),
     rhighscoreelement = document.getElementById( 'results-highscore' ),
     camerascale = 1,
-    mincamscale = 1,
+    mincamscale = touchable ? 0.8 : 1, // 1
     maxcamscale = 1.5,
     camx, camy, expectedcamy, lastcamy;
 

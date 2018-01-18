@@ -1,5 +1,6 @@
 /**
  * v6.js is a JavaScript Graphic Library.
+ * https://github.com/silent-tempest/v6
  *
  * p5.js:
  * https://github.com/processing/p5.js/
@@ -46,23 +47,23 @@ var document = window.document,
     pi = Math.PI,
     renderer_index = -1;
 
+var has_context = function ( canvas, type ) {
+  try {
+    if ( canvas.getContext( type ) ) {
+      return true;
+    }
+  } catch ( ex ) {
+    warn( ex );
+  }
+
+  return false;
+};
+
 var support = {
   webgl: function ( canvas ) {
     if ( typeof canvas.getContext != 'function' ) {
       return 0;
     }
-
-    var has_context = function ( canvas, type ) {
-      try {
-        if ( canvas.getContext( type ) ) {
-          return true;
-        }
-      } catch ( ex ) {
-        warn( ex );
-      }
-
-      return false;
-    };
 
     return has_context( canvas, 'webgl' ) ?
       1 : has_context( canvas, 'webgl-experemental' ) ?
@@ -255,7 +256,7 @@ Ticker.prototype.tick = function ( fps, requested ) {
   this.skipped += dt;
   this.total += dt;
 
-  while ( this.skipped > this.step ) {
+  while ( this.skipped > this.step && !this.stopped ) {
     this.skipped -= this.step;
     this.update.call( this, this.step );
   }
