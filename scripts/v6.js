@@ -426,7 +426,9 @@ Vector2D.prototype.cross = function( vector ) {
 };
 
 Vector2D.prototype.toString = function () {
-  return 'vec2(' + ( floor( this[ 0 ] * 100 ) * 0.01 ) + ', ' + ( floor( this[ 1 ] * 100 ) * 0.01 ) + ')';
+  return 'vec2(' +
+    ( floor( this[ 0 ] * 100 ) * 0.01 ) + ', ' +
+    ( floor( this[ 1 ] * 100 ) * 0.01 ) + ')';
 };
 
 /* VECTOR3D */
@@ -552,14 +554,18 @@ Vector3D.prototype.cross = function ( vector ) {
 };
 
 Vector3D.prototype.toString = function () {
-  return 'vec3(' + ( floor( this[ 0 ] * 100 ) * 0.01 ) + ', ' + ( floor( this[ 1 ] * 100 ) * 0.01 ) + ', ' + ( floor( this[ 2 ] * 100 ) * 0.01 ) + ')';
+  return 'vec3(' +
+    ( floor( this[ 0 ] * 100 ) * 0.01 ) + ', ' +
+    ( floor( this[ 1 ] * 100 ) * 0.01 ) + ', ' +
+    ( floor( this[ 2 ] * 100 ) * 0.01 ) + ')';
 };
 
 var names = [ 'set', 'lerp', 'add', 'sub', 'mult', 'div', 'setMag', 'normalize', 'rotate', 'limit' ],
     i = names.length - 1;
 
 for ( ; i >= 0; --i ) {
-  Vector2D[ names[ i ] ] = Vector3D[ names[ i ] ] = Function( 'vector, x, y, z, value', 'return vector.copy().' + names[ i ] + '( x, y, z, value );' );
+  Vector2D[ names[ i ] ] = Vector3D[ names[ i ] ] =
+    Function( 'vector, x, y, z, value', 'return vector.copy().' + names[ i ] + '( x, y, z, value );' );
 }
 
 Vector2D.angle = Vector3D.angle = function ( x, y ) {
@@ -775,7 +781,11 @@ RGBA.prototype.contrast = function () {
 };
 
 RGBA.prototype.toString = function () {
-  return 'rgba(' + this[ 0 ] + ', ' + this[ 1 ] + ', ' + this[ 2 ] + ', ' + this[ 3 ] + ')';
+  return 'rgba(' +
+    this[ 0 ] + ', ' +
+    this[ 1 ] + ', ' +
+    this[ 2 ] + ', ' +
+    this[ 3 ] + ')';
 };
 
 RGBA.prototype.set = function ( r, g, b, a ) {
@@ -878,7 +888,11 @@ HSLA.prototype.constructor = HSLA;
 HSLA.prototype.type = 'hsla';
 
 HSLA.prototype.toString = function () {
-  return 'hsla(' + this[ 0 ] + ', ' + this[ 1 ] + '\u0025, ' + this[ 2 ] + '\u0025, ' + this[ 3 ] + ')';
+  return 'hsla(' +
+    this[ 0 ] + ', ' +
+    this[ 1 ] + '\u0025, ' +
+    this[ 2 ] + '\u0025, ' +
+    this[ 3 ] + ')';
 };
 
 HSLA.prototype.set = function ( h, s, l, a ) {
@@ -993,7 +1007,8 @@ var is_font_variant = function ( value ) {
 };
 
 var is_font_size = function ( value ) {
-  return typeof value == 'number' || /^(?:smaller|xx-small|x-small|small|medium|large|x-large|xx-large|larger|(\d+|\d*\.\d+)(px|em|\u0025|cm|in|mm|pc|pt|rem)?)$/.test( value );
+  return typeof value == 'number' ||
+    /^(?:smaller|xx-small|x-small|small|medium|large|x-large|xx-large|larger|(\d+|\d*\.\d+)(px|em|\u0025|cm|in|mm|pc|pt|rem)?)$/.test( value );
 };
 
 var get_property_name = function ( value, name ) {
@@ -1313,9 +1328,7 @@ Renderer2D.prototype.add = function () {
 };
 
 Renderer2D.prototype.destroy = function () {
-  scotch( this.canvas ).off().remove();
-  delete renderers[ this.index ];
-  return this;
+  return scotch( this.canvas ).off().remove(), this;
 };
 
 Renderer2D.prototype.pixelDensity = function ( value ) {
@@ -1356,12 +1369,6 @@ Renderer2D.prototype.resize = function ( w, h ) {
   style.height = h + 'px';
   canvas.width = this.width = w * scale;
   canvas.height = this.height = h * scale;
-
-  if ( active_renderer_index === this.index ) {
-    window.width = this.width;
-    window.height = this.height;
-  }
-
   return this;
 };
 
@@ -1498,7 +1505,9 @@ Renderer2D.prototype.text = function ( text, x, y, maxWidth, maxHeight ) {
       i, length, line, words, word, test, j, k, splittedtext;
 
   if ( maxWidth !== undefined ) {
-    for ( splittedtext = [], i = 0, length = text.length; i < length && splittedtext.length < maxLength; ++i ) {
+    splittedtext = [];
+
+    for ( i = 0, length = text.length; i < length && splittedtext.length < maxLength; ++i ) {
       words = text[ i ].match( /\s+|\S+/g ) || [];
       line = '';
 
@@ -1709,29 +1718,6 @@ Renderer2D.prototype.closePath = function () {
   this.state.beginPath = false;
   this.context.closePath();
   return this;
-};
-
-var renderers = [],
-    renderers_modes = [],
-    active_renderer_index = -1;
-
-Renderer2D.prototype.global = function () {
-
-  if ( scotch.indexOf( renderers_modes, this.mode ) < 0 ) {
-    scotch.forInRight( this, function ( value, name ) {
-      this[ name ] = typeof value == 'function' ?
-        function ( a, b, c, d, e, f, g, h ) {
-          return value.call( renderers[ active_renderer_index ], a, b, c, d, e, f, g, h );
-        } : value;
-    }, window );
-
-    renderers_modes.push( this.mode );
-  }
-
-  active_renderer_index = this.index;
-
-  return this;
-
 };
 
 Renderer2D.prototype.getImageData = function ( x, y, w, h ) {
@@ -2056,18 +2042,14 @@ Transform.prototype.constructor = Transform;
 Transform.prototype.index = -1;
 
 Transform.prototype.set = function ( a, b, c, d, e, f ) {
-
   var matrix = this.matrix;
-
-  matrix[ 0 ] = a; // scale x
-  matrix[ 4 ] = d; // scale y
-  matrix[ 1 ] = b; // skew x
-  matrix[ 3 ] = c; // skew y
-  matrix[ 6 ] = e; // translate x
-  matrix[ 7 ] = f; // translate y
-
+  matrix[ 0 ] = a;
+  matrix[ 4 ] = d;
+  matrix[ 1 ] = b;
+  matrix[ 3 ] = c;
+  matrix[ 6 ] = e;
+  matrix[ 7 ] = f;
   return this;
-
 };
 
 Transform.prototype.save = function () {
@@ -2114,17 +2096,13 @@ var matrix = {
   },
 
   setIdentity: function ( m1 ) {
-
     m1[ 0 ] = m1[ 4 ] = m1[ 8 ] = 1;
     m1[ 1 ] = m1[ 2 ] = m1[ 3 ] = m1[ 5 ] = m1[ 6 ] = m1[ 7 ] = 0;
-
     return m1;
-
   },
 
   // from webgl-2d
   mult: function ( m1, m2 ) {
-
     var m10 = m1[ 0 ], m11 = m1[ 1 ], m12 = m1[ 2 ],
         m13 = m1[ 3 ], m14 = m1[ 4 ], m15 = m1[ 5 ],
         m16 = m1[ 6 ], m17 = m1[ 7 ], m18 = m1[ 8 ],
@@ -2141,9 +2119,7 @@ var matrix = {
     m1[ 6 ] = m20 * m16 + m23 * m17 + m26 * m18;
     m1[ 7 ] = m21 * m16 + m24 * m17 + m27 * m18;
     m1[ 8 ] = m22 * m16 + m25 * m17 + m28 * m18;
-
     return m1;
-
   },
 
   clone: function ( m1 ) {
@@ -2155,7 +2131,6 @@ var matrix = {
   },
 
   copy: function ( m1, m2 ) {
-
     m1[ 0 ] = m2[ 0 ];
     m1[ 1 ] = m2[ 1 ];
     m1[ 2 ] = m2[ 2 ];
@@ -2165,25 +2140,19 @@ var matrix = {
     m1[ 6 ] = m2[ 6 ];
     m1[ 7 ] = m2[ 7 ];
     m1[ 8 ] = m2[ 8 ];
-
     return m1;
-
   },
 
   // from glMatrix
   translate: function ( m1, x, y ) {
-
     m1[ 6 ] = x * m1[ 0 ] + y * m1[ 3 ] + m1[ 6 ];
     m1[ 7 ] = x * m1[ 1 ] + y * m1[ 4 ] + m1[ 7 ];
     m1[ 8 ] = x * m1[ 2 ] + y * m1[ 5 ] + m1[ 8 ];
-
     return m1;
-
   },
 
   // from glMatrix
   rotate: function ( m1, angle ) {
-
     var m10 = m1[ 0 ], m11 = m1[ 1 ], m12 = m1[ 2 ],
         m13 = m1[ 3 ], m14 = m1[ 4 ], m15 = m1[ 5 ],
         x = cos( angle ),
@@ -2195,21 +2164,17 @@ var matrix = {
     m1[ 3 ] = x * m13 - y * m10;
     m1[ 4 ] = x * m14 - y * m11;
     m1[ 5 ] = x * m15 - y * m12;
-
     return m1;
-
   },
 
   // from p5
   scale: function ( m1, x, y ) {
-
     m1[ 0 ] *= x;
     m1[ 1 ] *= x;
     m1[ 2 ] *= x;
     m1[ 3 ] *= y;
     m1[ 4 ] *= y;
     m1[ 5 ] *= y;
-
     return matrix;
   }
 };
@@ -2237,6 +2202,7 @@ var default_shaders = {
 'uniform vec4 u_color;' +
 
 'void main () {' +
+  // 'gl_FragColor = vec4( u_color.rgb / 255.0, u_color.a );' +
   'gl_FragColor = vec4( u_color.r / 255.0, u_color.g / 255.0, u_color.b / 255.0, u_color.a );' +
 '}',
 
@@ -2435,11 +2401,8 @@ RendererWebGL.prototype.rect = function ( x, y, w, h ) {
     .scale( w, h );
 
   this.rectangleBuffer.bind();
-
   this.draw( null, 4 );
-
   this.matrix.restore();
-
   return this;
 };
 
@@ -2494,7 +2457,6 @@ var create_polygon = function ( n ) {
 };
 
 RendererWebGL.prototype._polygon = function ( x, y, x_radius, y_radius, resolution, angle, degrees ) {
-
   if ( angle === undefined ) {
     angle = 0;
   } else if ( degrees ) {
@@ -2515,11 +2477,8 @@ RendererWebGL.prototype._polygon = function ( x, y, x_radius, y_radius, resoluti
     .scale( x_radius, y_radius );
 
   this.draw( polygon, polygon.length >> 1 );
-
   matrix.restore();
-
   return this;
-
 };
 
 RendererWebGL.prototype.ellipse = function ( x, y, r1, r2 ) {
@@ -2585,7 +2544,6 @@ RendererWebGL.prototype.colorMode = Renderer2D.prototype.colorMode;
 RendererWebGL.prototype.fill = Renderer2D.prototype.fill;
 RendererWebGL.prototype.stroke = Renderer2D.prototype.stroke;
 RendererWebGL.prototype.lineWidth = Renderer2D.prototype.lineWidth;
-RendererWebGL.prototype.global = Renderer2D.prototype.global;
 
 // todo implement point
 RendererWebGL.prototype.point = function ( x, y ) {
@@ -2610,7 +2568,6 @@ var create_renderer = function ( renderer, mode, options ) {
   renderer.saves = [];
   renderer.vertices = [];
   renderer.state = { beginPath: false };
-  renderers[ renderer.index ] = renderer;
 
   if ( !options.canvas ) {
     renderer.canvas = document.createElement( 'canvas' );
