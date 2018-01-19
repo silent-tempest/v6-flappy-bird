@@ -21,7 +21,7 @@ var ignore = function ( event ) {
 
 var touchable = 'ontouchend' in window,
     mode = touchable ? 'webgl' : '2d',
-    scale = 0.8;
+    scale = 0.2;
 
 var options = {
   settings: {
