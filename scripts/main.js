@@ -2,7 +2,9 @@
 
 'use strict';
 
-if ( 'serviceWorker' in navigator ) {
+var use_cache = true;
+
+if ( use_cache && 'serviceWorker' in navigator ) {
   navigator.serviceWorker.register( 'service-worker.js' )
     .then( function ( registration ) {
       console.log( 'Registration succeeded. Scope is ' + registration.scope );
@@ -19,7 +21,7 @@ var ignore = function ( event ) {
 
 var touchable = 'ontouchend' in window,
     mode = touchable ? 'webgl' : '2d',
-    scale = 1;
+    scale = 0.8;
 
 var options = {
   settings: {
@@ -119,10 +121,11 @@ Pipe.prototype = {
     }
 
     var d = lastcamy - expectedcamy,
-        y1 = bird.y - camy / camerascale - d + 10 * scale,
-        h1 = this.top - bird.y + camy / camerascale + d - 10 * scale,
+        pad = 1 * scale,
+        y1 = bird.y - camy / camerascale - d + pad,
+        h1 = this.top - bird.y + camy / camerascale + d - pad,
         y2 = this.bottom,
-        h2 = height / camerascale - y2 + bird.y - camy / camerascale - d - 10 * scale;
+        h2 = height / camerascale - y2 + bird.y - camy / camerascale - d - pad;
 
     if ( h1 > 0 ) {
       canvas.rect( x, y1, w, h1 );
@@ -158,7 +161,7 @@ var min = Math.min,
     pipeoffset = 200 * scale,
     minpipeheight = 256 * scale,
     maxpipeheight = 384 * scale,
-    collisionsteps = Math.round( 1 * scale ),
+    collisionsteps = Math.ceil( 1 * scale ),
     touched = false,
     jumped = false,
     stopped = true,
@@ -174,7 +177,7 @@ var min = Math.min,
     rhighscoreelement = document.getElementById( 'results-highscore' ),
     camerascale = 1,
     mincamscale = touchable ? 0.8 : 1, // 1
-    maxcamscale = 1.5,
+    maxcamscale = touchable ? 1.2 : 1.5, // 1.5
     camx, camy, expectedcamy, lastcamy;
 
 var resize = function () {
@@ -264,7 +267,7 @@ var restart = function () {
   renderscore( pipes.length = score = pipespeed = 0 );
   restartbutton.style.display = 'none';
   tipelement.style.display = '';
-  bird.sides = peako.random( 3, 6 );
+  bird.sides = peako.random( 3, 5 );
 
   var a = peako.random( 240, 270 ),
       b = a + 150,
@@ -394,8 +397,8 @@ v6.ticker( function ( delta ) {
 
       if ( pipe.finished ) {
         if ( pipe.top !== pipe.bottom ) {
-          pipe.top = min( pipe.top + 120 * delta, pipe.bottom );
-          pipe.bottom = max( pipe.bottom - 30 * delta, pipe.top );
+          pipe.top = min( pipe.top + 640 * delta * scale, pipe.bottom );
+          pipe.bottom = max( pipe.bottom - 640 * delta * scale, pipe.top );
         }
       } else if ( !pipe.finished && pipe.x + pipe.w < bird.x - bird.r ) {
         pipe.finished = true;
@@ -430,9 +433,9 @@ v6.ticker( function ( delta ) {
   expectedcamy = -bird.y + camy / camerascale;
 
   if ( lastcamy > expectedcamy ) {
-    lastcamy -= ( lastcamy - expectedcamy ) * 0.1; // ( lastcamy - expectedcamy > 100 ? 0.25 : 0.1 );
+    lastcamy -= ( lastcamy - expectedcamy ) * 0.1;
   } else if ( lastcamy < expectedcamy ) {
-    lastcamy += ( expectedcamy - lastcamy ) * 0.1; // ( expectedcamy - lastcamy > 100 ? 0.25 : 0.1 );;
+    lastcamy += ( expectedcamy - lastcamy ) * 0.1;
   }
 }, function () {
   canvas

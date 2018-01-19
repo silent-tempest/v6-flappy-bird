@@ -62,7 +62,7 @@ body, noscript {
 #results, noscript div {
   min-width: 256px;
   max-width: 384px;
-  width: 75%;
+  width: 70%;
 }
 
 noscript {
@@ -126,7 +126,7 @@ canvas {
 #restart-button,
 .score,
 .highscore {
-  /* text-shadow: -1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000; */
+  /* text-shadow: -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000; */
   text-transform: uppercase;
   color: #fff;
 }
@@ -176,10 +176,13 @@ canvas {
   animation: none;
 }
 
-#score,
+#score {
+  font: 500 64px / 64px Ubuntu;
+}
+
 #results-score,
 #results-highscore {
-  font: 500 64px / 64px Ubuntu;
+  font: 500 56px / 64px Ubuntu;
 }
 
 .highscore {
@@ -188,7 +191,7 @@ canvas {
 
 .score,
 .highscore {
-  font: 500 28px / 64px Ubuntu;
+  font: 500 24px / 64px Ubuntu;
 }
 
 .score:before,
@@ -211,9 +214,9 @@ canvas {
 
 #score {
   position: absolute;
-  top: 10%;
+  top: 15%;
   font: 500 64px / 64px Ubuntu;
-  opacity: 0.05;
+  opacity: 0.1;
 }
 
 #tip, #restart-button {
@@ -222,9 +225,9 @@ canvas {
   height: 72px;
   padding: 0 32px;
   text-align: right;
-  -webkit-animation: fade 1s infinite;
-  -moz-animation: fade 1s infinite;
-  -o-animation: fade 1s infinite;
-  animation: fade 1s infinite;
-  font: 500 22px / 72px Ubuntu;
+  -webkit-animation: fade 0.8s infinite;
+  -moz-animation: fade 0.8s infinite;
+  -o-animation: fade 0.8s infinite;
+  animation: fade 0.8s infinite;
+  font: 500 20px / 72px Ubuntu;
 }
