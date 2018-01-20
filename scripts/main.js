@@ -21,7 +21,7 @@ var ignore = function ( event ) {
 
 var touchable = 'ontouchend' in window,
     mode = touchable ? 'webgl' : '2d',
-    scale = window.devicePixelRatio || 0.8;
+    scale = 0.8;
 
 var options = {
   settings: {
