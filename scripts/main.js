@@ -1,3 +1,26 @@
+/**
+ * MIT License
+ *
+ * Copyright (c) 2017-2018 SILENT
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 ;( function ( window, undefined ) {
 
 'use strict';
@@ -31,7 +54,7 @@ var options = {
   mode: mode
 };
 
-var canvas = v6( options )
+var renderer = v6( options )
   .noFill()
   .lineWidth( 2 * scale );
 
@@ -39,19 +62,11 @@ var theme = {
   pipe: v6.hsla( 0, 70, 60 )
 };
 
-var bird = {
-  x: 0,
-  y: 0,
-  r: 24 * scale,
-  lift: 1750 * scale,
-  topspeed: -1200 * scale,
-  speed: 0,
-  color: v6.hsla( 0, 70, 60 ),
-  angle: 0,
-  sides: 4,
+var Bird = function () {};
 
-  render: function ( canvas ) {
-    canvas
+Bird.prototype = {
+  render: function ( renderer ) {
+    renderer
       .stroke( this.color )
       .polygon( this.x, this.y, this.r, this.sides, this.angle );
 
@@ -73,13 +88,28 @@ var bird = {
   },
 
   jump: function ( dt ) {
-    return this.speed = max( this.topspeed * dt, this.speed - this.lift * dt ), this;
+    this.speed = max( this.topspeed * dt, this.speed - this.lift * dt );
+    return this;
   },
 
   restore: function () {
     this.y = this.speed = 0;
-  }
+    return this;
+  },
+
+  constructor: Bird,
+  color: v6.hsla( 0, 70, 60 ),
+  topspeed: -1200 * scale,
+  speed: 0,
+  angle: 0,
+  sides: 4,
+  lift: 1750 * scale,
+  x: 0,
+  y: 0,
+  r: 24 * scale
 };
+
+var bird = new Bird();
 
 var smoothrandom = {
   last: 0,
@@ -108,11 +138,7 @@ var Pipe = function ( x ) {
 };
 
 Pipe.prototype = {
-  constructor: Pipe,
-  finished: false,
-  w: 96 * scale,
-
-  render: function ( canvas ) {
+  render: function ( renderer ) {
     var x = this.x,
         w = this.w;
 
@@ -128,22 +154,26 @@ Pipe.prototype = {
         h2 = height / camerascale - y2 + bird.y - camy / camerascale - d - pad;
 
     if ( h1 > 0 ) {
-      canvas.rect( x, y1, w, h1 );
+      renderer.rect( x, y1, w, h1 );
     }
 
     if ( h2 > 0 ) {
-      canvas.rect( x, y2, w, h2 );
+      renderer.rect( x, y2, w, h2 );
     }
 
     return this;
-  }
+  },
+
+  constructor: Pipe,
+  finished: false,
+  w: 96 * scale
 };
 
-var gethighscore = function () {
+var get_highscore = function () {
   return +window.localStorage.getItem( 'highscore' );
 };
 
-var sethighscore = function ( value ) {
+var set_highscore = function ( value ) {
   return window.localStorage.setItem( 'highscore', value ), value;
 };
 
@@ -151,7 +181,7 @@ var min = Math.min,
     max = Math.max,
     gravity = -55 * scale,
     score = 0,
-    highscore = gethighscore(),
+    highscore = get_highscore(),
     width = 0,
     height = 0,
     vw = 0,
@@ -170,28 +200,93 @@ var min = Math.min,
     scaleup = true,
     speedup = false,
     pipes = [],
-    scoreelement = window.document.getElementById( 'score' ),
-    tipelement = window.document.getElementById( 'tip' ),
-    resultselement = document.getElementById( 'results' ),
-    rscoreelement = document.getElementById( 'results-score' ),
-    rhighscoreelement = document.getElementById( 'results-highscore' ),
     camerascale = 1,
-    mincamscale = touchable ? 0.8 : 1, // 1
-    maxcamscale = touchable ? 1.2 : 1.5, // 1.5
+    mincamscale = touchable ? 0.75 : 1, // 1
+    maxcamscale = touchable ? 1.125 : 1.5, // 1.5
     camx, camy, expectedcamy, lastcamy;
 
-var resize = function () {
-  vw = $window.width();
-  vh = $window.height();
-  resizecanvas();
-};
+var ui = {};
 
-var resizecanvas = function () {
-  width = vw * scale;
-  height = vh * scale;
+ui[ '#restart-button' ] = ( function () {
+  var touchstart = function ( event ) {
+    if ( ignore( event ) ) {
+      return;
+    }
+
+    if ( touchable ) {
+      event = event.targetTouches[ 0 ];
+      this.touched = true;
+      this.touchpos.set( event.clientX, event.clientY );
+    }
+
+    $button.addClass( 'active' );
+  };
+
+  var touchend = function ( event, force ) {
+    if ( !force && ignore( event ) ) {
+      return;
+    }
+
+    if ( touchable ) {
+      if ( stopped && this.touched ) {
+        restart();
+      }
+
+      this.touched = false;
+    } else if ( stopped ) {
+      restart();
+    }
+
+    $button.removeClass( 'active' );
+  };
+
+  var $button = _( '#restart-button' );
+
+  if ( touchable ) {
+    var touchmove = function ( event ) {
+      event = event.targetTouches[ 0 ];
+
+      // fix FF `touchmove = alert;`
+      if ( event.clientX !== this.touchpos[ 0 ] || event.clientY !== this.touchpos[ 1 ] ) {
+        this.touched = false;
+        touchend.call( this, event, true );
+      }
+    };
+
+    $button
+      .on( 'touchstart mousedown', touchstart )
+      .on( 'touchmove', touchmove )
+      .on( 'touchend mouseup', touchend );
+  } else {
+    $button
+      .text( 'press any key to continue' )
+      .on( 'mousedown', touchstart )
+      .on( 'mouseup', touchend );
+  }
+
+  $button[ 0 ].touchpos = v6.vec2();
+
+  return $button;
+} )();
+
+_.forEach( [
+  '#tip', '#score', '#results', '#results-score', '#results-highscore', '.theme'
+], function ( selector ) {
+  this[ selector ] = _( selector );
+}, ui );
+
+if ( !touchable ) {
+  ui[ '#tip' ].text( 'press spacebar to jump' );
+}
+
+ui[ '#results-highscore' ].text( highscore );
+
+var resize = function () {
+  width = ( vw = $window.width() ) * scale;
+  height = ( vh = $window.height() ) * scale;
   camx = width * 0.2;
   camy = lastcamy = height * 0.5;
-  canvas.resize( vw, vh );
+  renderer.resize( vw, vh );
 };
 
 var collide = function ( bird, pipe ) {
@@ -226,8 +321,8 @@ var addpipe = function ( x ) {
   return pipes.push( x = new Pipe( x ) ), x;
 };
 
-var renderscore = function ( score ) {
-  ( stopped ? rscoreelement : scoreelement ).textContent = score;
+var render_score = function ( score ) {
+  ui[ stopped ? '#results-score' : '#score' ].text( score );
 };
 
 var jump = function ( event ) {
@@ -235,7 +330,7 @@ var jump = function ( event ) {
     return;
   }
 
-  if ( !stopped && ( !event || peako.event.which( event ) === 1 ) ) {
+  if ( !stopped && ( !event || _.event.which( event ) === 1 ) ) {
     touched = true;
 
     if ( !started ) {
@@ -246,105 +341,50 @@ var jump = function ( event ) {
 
 var stop = function () {
   if ( score > highscore && collision ) {
-    sethighscore( rhighscoreelement.textContent = highscore = score );
+    ui[ '#results-highscore' ].text( set_highscore( highscore = score ) );
   }
 
   bird.speed = 0;
   stopped = true;
   started = speedup = false;
-  scoreelement.style.display = 'none';
-  rscoreelement.textContent = score;
-  restartbutton.style.display = resultselement.style.display = '';
+  ui[ '#restart-button' ].show();
+  ui[ '#results' ].show();
+  ui[ '#score' ].hide();
+  render_score( score );
 };
-
-var $theme = peako( '.theme' );
 
 var restart = function () {
   bird.restore();
   lastcamy = expectedcamy = -bird.y + camy / camerascale;
   stopped = false;
   scaleup = true;
-  renderscore( pipes.length = score = pipespeed = 0 );
-  restartbutton.style.display = 'none';
-  tipelement.style.display = '';
-  bird.sides = peako.random( 3, 5 );
+  render_score( pipes.length = score = pipespeed = 0 );
+  ui[ '#restart-button' ].hide();
+  ui[ '#tip' ].show();
+  bird.sides = _.random( 3, 5 );
 
-  var a = peako.random( 240, 270 ),
+  var a = _.random( 240, 270 ),
       b = a + 150,
       c = a + 210;
 
-  $theme.attr( 'content', canvas.canvas.style.background = v6.hsla( a, 35, 30, 1 ) );
+  ui[ '.theme' ].attr( 'content', renderer.canvas.style.background = v6.hsla( a, 35, 30, 1 ) );
   theme.pipe = v6.hsla( c, 90, 80 );
   bird.color = v6.hsla( b, 100, 70 );
 };
 
 var start = function () {
-  scoreelement.style.display = '';
-  tipelement.style.display = resultselement.style.display = 'none';
+  ui[ '#results' ].hide();
+  ui[ '#tip' ].hide();
+  ui[ '#score' ].show();
   started = speedup = true;
 };
-
-var restartbutton = function () {
-  var touchstart = function ( event ) {
-    if ( !ignore( event ) ) {
-      button.addClass( 'active' );
-
-      if ( touchable ) {
-        this.touched = true;
-        event = event.targetTouches[ 0 ];
-        ( this.touchpos || ( this.touchpos = v6.vec2() ) ).set( event.clientX, event.clientY );
-      }
-    }
-  };
-
-  var touchend = function ( event, force ) {
-    if ( force || !ignore( event ) ) {
-      button.removeClass( 'active' );
-
-      if ( touchable ) {
-        if ( stopped && this.touched ) {
-          restart();
-        }
-
-        this.touched = false;
-      } else if ( stopped ) {
-        restart();
-      }
-    }
-  };
-
-  var button = _( '#restart-button' )
-    .on( touchable ? 'touchstart mousedown' : 'mousedown', touchstart )
-    .on( touchable ? 'touchend mouseup' : 'mouseup', touchend );
-
-  if ( !touchable ) {
-    button.text( 'press any key to continue' );
-  }
-
-  if ( touchable ) {
-    button.touchmove( function ( event ) {
-      event = event.targetTouches[ 0 ];
-
-      if ( event.clientX !== this.touchpos[ 0 ] || event.clientY !== this.touchpos[ 1 ] ) {
-        this.touched = false;
-        touchend.call( this, event, true );
-      }
-    } );
-  }
-
-  return button[ 0 ];
-}();
-
-if ( !touchable ) {
-  _( '#tip' ).text( 'press spacebar to jump' );
-}
 
 var $window = _( window )
   .keydown( function ( event ) {
     if ( stopped ) {
       restart();
-    } else if ( peako.event.which( event ) === 32 ) {
-      jump( null );
+    } else if ( _.event.which( event ) === 32 ) {
+      jump();
     }
   } )
   .on( touchable ? 'touchstart mousedown' : 'mousedown', jump )
@@ -353,7 +393,6 @@ var $window = _( window )
   } )
   .resize( resize );
 
-rhighscoreelement.textContent = highscore;
 resize();
 restart();
 
@@ -370,7 +409,7 @@ v6.ticker( function ( delta ) {
     pipespeed = _.clamp( pipespeed + worldspeed * 0.02, 0, worldspeed );
     speedup = pipespeed !== worldspeed;
   } else if ( stopped ) {
-    pipespeed = peako.clamp( pipespeed - worldspeed * 0.01, 0, worldspeed );
+    pipespeed = _.clamp( pipespeed - worldspeed * 0.01, 0, worldspeed );
   }
 
   if ( scaleup ) {
@@ -402,7 +441,7 @@ v6.ticker( function ( delta ) {
         }
       } else if ( !pipe.finished && pipe.x + pipe.w < bird.x - bird.r ) {
         pipe.finished = true;
-        renderscore( ++score );
+        render_score( ++score );
       }
 
       if ( pipe.x + pipe.w < -camx / mincamscale ) {
@@ -438,18 +477,18 @@ v6.ticker( function ( delta ) {
     lastcamy += ( expectedcamy - lastcamy ) * 0.1;
   }
 }, function () {
-  canvas
+  renderer
     .restore()
     .clear()
     .save()
     .scale( camerascale, camerascale )
     .translate( camx / camerascale, lastcamy );
 
-  bird.render( canvas );
-  canvas.stroke( theme.pipe );
+  bird.render( renderer );
+  renderer.stroke( theme.pipe );
 
   for ( var i = pipes.length - 1; i >= 0; --i ) {
-    pipes[ i ].render( canvas );
+    pipes[ i ].render( renderer );
   }
 } ).tick();
 
