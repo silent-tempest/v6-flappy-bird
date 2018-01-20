@@ -42,8 +42,12 @@ var ignore = function ( event ) {
     ( event.target === null || !/^(?:input|textarea)$/i.test( event.target.tagName ) );
 };
 
+var safari = platform.os.family &&
+  !platform.os.family === 'iOS' &&
+  platform.name === 'Safari';
+
 var touchable = 'ontouchend' in window,
-    mode = touchable ? 'webgl' : '2d',
+    mode = touchable && !safari ? 'webgl' : '2d',
     scale = 0.8;
 
 var options = {

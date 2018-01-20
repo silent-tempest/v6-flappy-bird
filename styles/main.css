@@ -52,26 +52,27 @@ body {
   background-color: #000;
 }
 
-body, noscript {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-flow: column wrap;
-}
-
 #results, noscript div {
   min-width: 256px;
   max-width: 384px;
   width: 70%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate( -50%, -50% );
+  -moz-transform: translate( -50%, -50% );
+  -o-transform: translate( -50%, -50% );
+  transform: translate( -50%, -50% );
 }
 
 noscript {
+  z-index: 3;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba( 0, 0, 0, 0.7 );
+  background: #000;
 }
 
 noscript div {
@@ -86,6 +87,7 @@ noscript div {
   -webkit-box-shadow: 0 2px 64px rgba( 0, 0, 0, 0.26 );
   -moz-box-shadow: 0 2px 64px rgba( 0, 0, 0, 0.26 );
   box-shadow: 0 2px 64px rgba( 0, 0, 0, 0.26 );
+  font: 500 16px / 1.75 Ubuntu, sans-serif;
 }
 
 canvas {
@@ -95,13 +97,7 @@ canvas {
   background: transparent;
 }
 
-@keyframes fade {
-  0%   { opacity: 1; }
-  50%  { opacity: 0.5; }
-  100% { opacity: 1; }
-}
-
-@-o-keyframes fade {
+@-webkit-keyframes fade {
   0%   { opacity: 1; }
   50%  { opacity: 0.5; }
   100% { opacity: 1; }
@@ -113,7 +109,13 @@ canvas {
   100% { opacity: 1; }
 }
 
-@-webkit-keyframes fade {
+@-o-keyframes fade {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+@keyframes fade {
   0%   { opacity: 1; }
   50%  { opacity: 0.5; }
   100% { opacity: 1; }
@@ -200,6 +202,7 @@ canvas {
 
 .score:after,
 .highscore:after {
+  content: '';
   clear: both;
 }
 
@@ -213,6 +216,9 @@ canvas {
   top: 15%;
   font: 500 56px / 56px Ubuntu, sans-serif;
   opacity: 0.1;
+  width: 100%;
+  text-align: center;
+  display: block;
 }
 
 #tip, #restart-button {

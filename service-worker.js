@@ -4,6 +4,7 @@ var paths = [
   'index.html',
   'scripts/peako.js',
   'scripts/v6.js',
+  'scripts/platform.js',
   'scripts/main.js',
   'styles/main.css',
   'fonts/Ubuntu-Medium.ttf'
