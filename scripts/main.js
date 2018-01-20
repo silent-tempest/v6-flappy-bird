@@ -25,9 +25,7 @@
 
 'use strict';
 
-var use_cache = true;
-
-if ( use_cache && 'serviceWorker' in navigator ) {
+if ( 'serviceWorker' in navigator ) {
   navigator.serviceWorker.register( 'service-worker.js' )
     .then( function ( registration ) {
       console.log( 'Registration succeeded. Scope is ' + registration.scope );
@@ -80,7 +78,7 @@ Bird.prototype = {
   update: function ( dt ) {
     this.speed = max( this.topspeed * dt, ( this.speed - gravity * dt ) );
 
-    var expangle = v6.Vector2D.angle( worldspeed * dt, this.speed );
+    var expangle = v6.Vector2D.angle( pipespeed * dt, this.speed );
 
     if ( this.angle > expangle ) {
       this.angle -= ( this.angle - expangle ) * 0.1;
@@ -251,7 +249,9 @@ ui[ '#restart-button' ] = ( function () {
       event = event.targetTouches[ 0 ];
 
       // fix FF `touchmove = alert;`
-      if ( event.clientX !== this.touchpos[ 0 ] || event.clientY !== this.touchpos[ 1 ] ) {
+      if ( event.clientX !== this.touchpos[ 0 ] ||
+        event.clientY !== this.touchpos[ 1 ] )
+      {
         this.touched = false;
         touchend.call( this, event, true );
       }
@@ -296,13 +296,13 @@ var resize = function () {
 var collide = function ( bird, pipe ) {
   if ( bird.x + bird.r < pipe.x ||
     bird.x - bird.r > pipe.x + pipe.w ||
-    bird.y - bird.r > pipe.top && bird.y + bird.r < pipe.bottom ) {
-
+    bird.y - bird.r > pipe.top && bird.y + bird.r < pipe.bottom )
+  {
     return false;
   } else if ( bird.x + bird.r >= pipe.x &&
     bird.x - bird.r <= pipe.x + pipe.w &&
-    ( bird.y + bird.r < pipe.top || bird.y - bird.r > pipe.bottom ) ) {
-
+    ( bird.y + bird.r < pipe.top || bird.y - bird.r > pipe.bottom ) )
+  {
     return true;
   }
 
@@ -310,15 +310,11 @@ var collide = function ( bird, pipe ) {
     intersect( bird.x, bird.y, bird.r, pipe.x, pipe.bottom, pipe.w, bird.r * 2 );
 };
 
-var dist = function ( x1, y1, x2, y2, w2, h2 ) {
+var intersect = function ( x1, y1, r1, x2, y2, w2, h2 ) {
   var dx = x1 - max( x2, min( x1, x2 + w2 ) ),
       dy = y1 - max( y2, min( y1, y2 + h2 ) );
 
-  return dx * dx + dy * dy;
-};
-
-var intersect = function ( x1, y1, r1, x2, y2, w2, h2 ) {
-  return dist( x1, y1, x2, y2, w2, h2 ) <= r1 * r1;
+  return dx * dx + dy * dy <= r1 * r1;
 };
 
 var addpipe = function ( x ) {
@@ -367,7 +363,8 @@ var restart = function () {
       b = a + 150,
       c = a + 210;
 
-  ui[ '.theme' ].attr( 'content', renderer.canvas.style.background = v6.hsla( a, 35, 30, 1 ) );
+  ui[ '.theme' ].attr( 'content',
+    renderer.canvas.style.background = v6.hsla( a, 35, 30, 1 ) );
   theme.pipe = v6.hsla( c, 90, 80 );
   bird.color = v6.hsla( b, 100, 70 );
 };
@@ -485,8 +482,7 @@ v6.ticker( function ( delta ) {
     .restore()
     .clear()
     .save()
-    .scale( camerascale, camerascale )
-    .translate( camx / camerascale, lastcamy );
+    .setTransform( camerascale, 0, 0, camerascale, camx, lastcamy * camerascale );
 
   bird.render( renderer );
   renderer.stroke( theme.pipe );
