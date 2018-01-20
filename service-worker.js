@@ -2,16 +2,11 @@ var cache_name = 'v1';
 
 var paths = [
   'index.html',
-  'service-worker.js',
   'scripts/peako.js',
   'scripts/v6.js',
   'scripts/main.js',
   'styles/main.css',
-  'fonts/Ubuntu-Medium.ttf',
-  'drawable/icon-192.png',
-  'drawable/icon-144.png',
-  'drawable/icon-96.png',
-  'drawable/icon-48.png'
+  'fonts/Ubuntu-Medium.ttf'
 ];
 
 this.addEventListener( 'install', function ( event ) {

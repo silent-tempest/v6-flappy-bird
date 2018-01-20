@@ -178,7 +178,7 @@ canvas {
 
 #results-score,
 #results-highscore {
-  font: 500 48px / 64px Ubuntu;
+  font: 500 48px / 64px Ubuntu, sans-serif;
 }
 
 .highscore {
@@ -187,7 +187,7 @@ canvas {
 
 .score,
 .highscore {
-  font: 500 20px / 64px Ubuntu;
+  font: 500 20px / 64px Ubuntu, sans-serif;
 }
 
 .score:before,
@@ -211,7 +211,7 @@ canvas {
 #score {
   position: absolute;
   top: 15%;
-  font: 500 56px / 56px Ubuntu;
+  font: 500 56px / 56px Ubuntu, sans-serif;
   opacity: 0.1;
 }
 
@@ -225,5 +225,5 @@ canvas {
   -moz-animation: fade 0.8s infinite;
   -o-animation: fade 0.8s infinite;
   animation: fade 0.8s infinite;
-  font: 500 18px / 64px Ubuntu;
+  font: 500 18px / 64px Ubuntu, sans-serif;
 }
