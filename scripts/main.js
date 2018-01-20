@@ -340,10 +340,6 @@ var jump = function ( event ) {
 };
 
 var stop = function () {
-  if ( score > highscore && collision ) {
-    ui[ '#results-highscore' ].text( set_highscore( highscore = score ) );
-  }
-
   bird.speed = 0;
   stopped = true;
   started = speedup = false;
@@ -475,6 +471,10 @@ v6.ticker( function ( delta ) {
     lastcamy -= ( lastcamy - expectedcamy ) * 0.1;
   } else if ( lastcamy < expectedcamy ) {
     lastcamy += ( expectedcamy - lastcamy ) * 0.1;
+  }
+
+  if ( score > highscore && collision ) {
+    ui[ '#results-highscore' ].text( set_highscore( highscore = score ) );
   }
 }, function () {
   renderer
