@@ -176,13 +176,9 @@ canvas {
   animation: none;
 }
 
-#score {
-  font: 500 64px / 64px Ubuntu;
-}
-
 #results-score,
 #results-highscore {
-  font: 500 56px / 64px Ubuntu;
+  font: 500 48px / 64px Ubuntu;
 }
 
 .highscore {
@@ -191,7 +187,7 @@ canvas {
 
 .score,
 .highscore {
-  font: 500 24px / 64px Ubuntu;
+  font: 500 20px / 64px Ubuntu;
 }
 
 .score:before,
@@ -215,19 +211,19 @@ canvas {
 #score {
   position: absolute;
   top: 15%;
-  font: 500 64px / 64px Ubuntu;
+  font: 500 56px / 56px Ubuntu;
   opacity: 0.1;
 }
 
 #tip, #restart-button {
   bottom: 24px;
   right: 24px;
-  height: 72px;
+  height: 64px;
   padding: 0 32px;
   text-align: right;
   -webkit-animation: fade 0.8s infinite;
   -moz-animation: fade 0.8s infinite;
   -o-animation: fade 0.8s infinite;
   animation: fade 0.8s infinite;
-  font: 500 20px / 72px Ubuntu;
+  font: 500 18px / 64px Ubuntu;
 }

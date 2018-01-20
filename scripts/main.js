@@ -21,7 +21,7 @@ var ignore = function ( event ) {
 
 var touchable = 'ontouchend' in window,
     mode = touchable ? 'webgl' : '2d',
-    scale = 0.8;
+    scale = window.devicePixelRatio || 0.8;
 
 var options = {
   settings: {
@@ -397,8 +397,8 @@ v6.ticker( function ( delta ) {
 
       if ( pipe.finished ) {
         if ( pipe.top !== pipe.bottom ) {
-          pipe.top = min( pipe.top + 640 * delta * scale, pipe.bottom );
-          pipe.bottom = max( pipe.bottom - 640 * delta * scale, pipe.top );
+          pipe.top = min( pipe.top + 480 * delta * scale, pipe.bottom );
+          pipe.bottom = max( pipe.bottom - 480 * delta * scale, pipe.top );
         }
       } else if ( !pipe.finished && pipe.x + pipe.w < bird.x - bird.r ) {
         pipe.finished = true;
