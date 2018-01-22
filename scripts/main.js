@@ -171,16 +171,16 @@ Pipe.prototype = {
   w: 96 * scale
 };
 
-var has_storage = typeof localStorage != 'undefined',
+var has_storage = !!window.localStorage,
     get_highscore, set_highscore;
 
 if ( has_storage ) {
   get_highscore = function () {
-    return +window.localStorage.getItem( 'highscore' );
+    return +localStorage.getItem( 'highscore' );
   };
 
   set_highscore = function ( value ) {
-    return window.localStorage.setItem( 'highscore', value ), value;
+    return localStorage.setItem( 'highscore', value ), value;
   };
 } else {
   get_highscore = function () {
