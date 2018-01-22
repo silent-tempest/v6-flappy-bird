@@ -171,13 +171,24 @@ Pipe.prototype = {
   w: 96 * scale
 };
 
-var get_highscore = function () {
-  return +window.localStorage.getItem( 'highscore' );
-};
+var has_storage = typeof localStorage != 'undefined',
+    get_highscore, set_highscore;
 
-var set_highscore = function ( value ) {
-  return window.localStorage.setItem( 'highscore', value ), value;
-};
+if ( has_storage ) {
+  get_highscore = function () {
+    return +window.localStorage.getItem( 'highscore' );
+  };
+
+  set_highscore = function ( value ) {
+    return window.localStorage.setItem( 'highscore', value ), value;
+  };
+} else {
+  get_highscore = function () {
+    return 0;
+  };
+
+  set_highscore = _.identity;
+}
 
 var min = Math.min,
     max = Math.max,
