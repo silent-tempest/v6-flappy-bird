@@ -40,8 +40,8 @@ var ignore = function ( event ) {
     ( event.target === null || !/^(?:input|textarea)$/i.test( event.target.tagName ) );
 };
 
-var safari = platform.os.family &&
-  !platform.os.family === 'iOS' &&
+var safari = platform.os &&
+  platform.os.family === 'iOS' &&
   platform.name === 'Safari';
 
 var touchable = 'ontouchend' in window,
@@ -310,20 +310,22 @@ var collide = function ( bird, pipe ) {
     bird.y - bird.r > pipe.top && bird.y + bird.r < pipe.bottom )
   {
     return false;
-  } else if ( bird.x + bird.r >= pipe.x &&
+  }
+
+  if ( bird.x + bird.r >= pipe.x &&
     bird.x - bird.r <= pipe.x + pipe.w &&
     ( bird.y + bird.r < pipe.top || bird.y - bird.r > pipe.bottom ) )
   {
     return true;
   }
 
-  return intersect( bird.x, bird.y, bird.r, pipe.x, pipe.top - bird.r * 2, pipe.w, bird.r * 2 ) ||
-    intersect( bird.x, bird.y, bird.r, pipe.x, pipe.bottom, pipe.w, bird.r * 2 );
+  return intersects( bird.x, bird.y, bird.r, pipe.x, pipe.top - bird.r * 2, pipe.w, bird.r * 2 ) ||
+    intersects( bird.x, bird.y, bird.r, pipe.x, pipe.bottom, pipe.w, bird.r * 2 );
 };
 
-var intersect = function ( x1, y1, r1, x2, y2, w2, h2 ) {
-  var dx = x1 - max( x2, min( x1, x2 + w2 ) ),
-      dy = y1 - max( y2, min( y1, y2 + h2 ) );
+var intersects = function ( x1, y1, r1, x2, y2, w2, h2 ) {
+  var dx = x1 - max( min( x1, x2 + w2 ), x2 ),
+      dy = y1 - max( min( y1, y2 + h2 ), y2 );
 
   return dx * dx + dy * dy <= r1 * r1;
 };

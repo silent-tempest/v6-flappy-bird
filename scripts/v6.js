@@ -150,11 +150,9 @@ var align = function ( value, size, align ) {
     case 'left':
     case 'top':
       return value;
-
     case 'center':
     case 'middle':
       return value - size * 0.5;
-
     case 'right':
     case 'bottom':
       return value - size;
@@ -227,15 +225,19 @@ var Ticker = function ( update, render ) {
   ticker.render = render;
 
   ticker.boundtick = function () {
-    tick.call( ticker, undefined, true );
+    tick.call( ticker, null, true );
   };
 };
 
 Ticker.prototype = scotch.create( null );
 Ticker.prototype.constructor = Ticker;
 Ticker.prototype.step = 1 / 60;
-Ticker.prototype.skipped = Ticker.prototype.lastid = Ticker.prototype.idoffset = Ticker.prototype.total = 0;
 Ticker.prototype.stopped = true;
+
+Ticker.prototype.skipped =
+  Ticker.prototype.lastid =
+  Ticker.prototype.idoffset =
+  Ticker.prototype.total = 0;
 
 Ticker.prototype.tick = function ( fps, requested ) {
   if ( this.stopped ) {
@@ -246,12 +248,12 @@ Ticker.prototype.tick = function ( fps, requested ) {
     this.stopped = false;
   }
 
-  if ( fps !== undefined ) {
+  if ( fps != null ) {
     this.step = 1 / fps;
   }
 
   var now = scotch.timestamp(),
-      dt = min( 5, ( now - this.lasttime ) * 0.001 );
+      dt = min( 1, ( now - this.lasttime ) * 0.001 );
 
   this.skipped += dt;
   this.total += dt;
@@ -384,7 +386,6 @@ Vector2D.prototype.normalize = function () {
 };
 
 Vector2D.prototype.rotate = function ( angle ) {
-
   if ( settings.degrees ) {
     angle = angle * pi / 180 + this.angle();
   } else {
@@ -392,12 +393,9 @@ Vector2D.prototype.rotate = function ( angle ) {
   }
 
   var length = this.mag();
-
   this[ 0 ] = length * cos( angle );
   this[ 1 ] = length * sin( angle );
-
   return this;
-
 };
 
 Vector2D.prototype.dot = function ( x, y ) {
@@ -730,17 +728,9 @@ var format_hex = function ( match, short_syntax ) {
   var r = match[ 1 ],
       g = match[ 2 ],
       b = match[ 3 ],
-      a = match[ 4 ];
-
-  return r + r + g + g + b + b + ( a ? a + a : 'ff' );
-
-  // #todo test in benchmark
-  /* var r = match[ 1 ],
-      g = match[ 2 ],
-      b = match[ 3 ],
       a = match[ 4 ] || 'f';
 
-  return r + r + g + g + b + b + a + a; */
+  return r + r + g + g + b + b + a + a;
 };
 
 var parse_hex = function ( hex ) {
@@ -1332,11 +1322,7 @@ Renderer2D.prototype.destroy = function () {
 };
 
 Renderer2D.prototype.pixelDensity = function ( value ) {
-  if ( value !== undefined ) {
-    return this.settings.scale = value, this;
-  }
-
-  return this;
+  return this.settings.scale = value, this;
 };
 
 Renderer2D.prototype.push = function () {
@@ -1912,7 +1898,6 @@ Program.prototype.vertexPointer = function ( index, size, type, normalized, stri
 };
 
 var create_program = function ( context, vShader, fShader ) {
-
   var program = context.createProgram();
 
   context.attachShader( program, vShader );
@@ -1930,7 +1915,6 @@ var create_program = function ( context, vShader, fShader ) {
   }
 
   return program;
-
 };
 
 /* SHADER */
@@ -1977,7 +1961,6 @@ Shader.prototype.vertexPointer = function ( renderer, index, size, type, normali
 };
 
 var create_shader = function ( context, source, type ) {
-
   var shader = context.createShader( type );
 
   context.shaderSource( shader, source );
@@ -1988,10 +1971,9 @@ var create_shader = function ( context, source, type ) {
   }
 
   return shader;
-
 };
 
-var get_source = function ( script ){
+var get_source = function ( script ) {
   var child = script.firstChild,
       source = '';
 
@@ -2278,18 +2260,13 @@ RendererWebGL.prototype.blending = function ( blending ) {
 };
 
 RendererWebGL.prototype._clear_color = function ( r, g, b, a ) {
-
   var gl = this.context;
-
   gl.clearColor( r, g, b, a );
   gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
-
   return this;
-
 };
 
 RendererWebGL.prototype.clearColor = function ( a, b, c, d ) {
-
   var rgba = this.color( a, b, c, d );
 
   if ( rgba.type !== 'rgba' ) {
@@ -2301,7 +2278,6 @@ RendererWebGL.prototype.clearColor = function ( a, b, c, d ) {
     rgba[ 1 ] / 255,
     rgba[ 2 ] / 255,
     rgba[ 3 ] );
-
 };
 
 var background_vertices = new Float32Array( [
@@ -2312,7 +2288,6 @@ var background_vertices = new Float32Array( [
 ] );
 
 RendererWebGL.prototype._background_color = function ( r, g, b, a ) {
-
   var gl = this.context,
       backgroundProgram = this.backgroundProgram;
 
@@ -2324,13 +2299,10 @@ RendererWebGL.prototype._background_color = function ( r, g, b, a ) {
     .vertexPointer( backgroundProgram.attributes.a_position.location, 2, gl.FLOAT, false, 0, 0 );
 
   gl.drawArrays( gl.TRIANGLE_FAN, 0, 4 );
-
   return this;
-
 };
 
 RendererWebGL.prototype.backgroundColor = function ( a, b, c, d ) {
-
   var rgba = this.color( a, b, c, d ),
       r, g;
 
@@ -2346,7 +2318,6 @@ RendererWebGL.prototype.backgroundColor = function ( a, b, c, d ) {
   return this[ a < 1 ?
     '_background_color' :
     '_clear_color' ]( r, g, b, a );
-
 };
 
 RendererWebGL.prototype.background = Renderer2D.prototype.background;
@@ -2395,6 +2366,9 @@ var rectangle_vertices = new Float32Array( [
 ] );
 
 RendererWebGL.prototype.rect = function ( x, y, w, h ) {
+  x = align( x, w, this.style.rectAlignX );
+  y = align( y, h, this.style.rectAlignY );
+
   this.matrix
     .save()
     .translate( x, y )
